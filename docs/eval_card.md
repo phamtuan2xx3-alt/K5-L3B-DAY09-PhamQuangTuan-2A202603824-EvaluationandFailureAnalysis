@@ -5,14 +5,14 @@ Card này đi kèm mỗi báo cáo đánh giá và được dùng lại ở Day 
 ## Tổng quan phiên bản & Run ID
 
 - **Run ID (v1):**
-  - Baseline (`swarm`): `E-swarm-20261118-2727` (`src/reports/baseline_v1.json`)
-  - Đối chứng đạt (`fixed`): `E-fixed-20261118-2727` (`src/reports/eval_fixed.json`)
-  - Regression (`seeded_regression`): `E-seeded_regression-20261118-2727` (`src/reports/eval_seeded_regression.json`)
+  - Baseline (`swarm`): `E-swarm-20261118-6390` (`src/reports/baseline_v1.json`)
+  - Đối chứng đạt (`fixed`): `E-fixed-20261118-6390` (`src/reports/eval_fixed.json`)
+  - Regression (`seeded_regression`): `E-seeded_regression-20261118-6390` (`src/reports/eval_seeded_regression.json`)
 - **Run ID (v2 — Advanced/Expert):**
-  - Baseline (`swarm`): `E-swarm-20261118-99fe` (`src/reports/baseline_v2.json`)
-  - Regression theo slice (`slice_regression`): `E-slice_regression-20261118-99fe` (`src/reports/eval_slice_regression.json`)
-- **Eval set SHA:** v1 = `27277e935ca6` · v2 = `99fea58185e0`
-- **Phiên bản:** nhánh `starter/d09` (nền Day 8 commit `c6865be`) · eval set `v1` (`27277e935ca6`) / `v2` (`99fea58185e0`) · `metric_spec` `1.0` / `2.0` · seeds `11/22/33/44/55` · Python `3.12` · `MockLLM`
+  - Baseline (`swarm`): `E-swarm-20261118-2b0c` (`src/reports/baseline_v2.json`)
+  - Regression theo slice (`slice_regression`): `E-slice_regression-20261118-2b0c` (`src/reports/eval_slice_regression.json`)
+- **Eval set SHA:** v1 = `63901e579e7a` · v2 = `2b0c15529a61`
+- **Phiên bản:** nhánh `starter/d09` (nền Day 8 commit `c6865be`) · eval set `v1` (`63901e579e7a`) / `v2` (`2b0c15529a61`) · `metric_spec` `1.0` / `2.0` · seeds `11/22/33/44/55` · Python `3.12` · `MockLLM`
 - **Eval set:**
   - `v1`: 14 item × 5 seed (`70` trials), nguồn `lab8_public` (`src/data/eval/eval_set_v1.jsonl`); nhãn tách riêng tại `src/data/eval/labels_v1.json`.
   - `v2`: 28 item × 5 seed (`140` trials = 14 item v1 + 14 item `instructor_adversarial` từ `src/data/eval/adversarial_v2.json`) tại `src/data/eval/eval_set_v2.jsonl`; nhãn tách riêng tại `src/data/eval/labels_v2.json` (mọi FM bị tấn công đều có `>= 4` item, đạt chuẩn `>= 3`).
@@ -40,13 +40,13 @@ Các slice chặn release trong v2 (`metric: pass_rate`, `no_significant_drop: t
 
 ## Kết quả baseline vs PR (v1)
 
-Baseline `swarm` (`E-swarm-20261118-2727`): `approval_bypass=0`, `secret_leak=0`, `db_fact_kept=0.9857`, `refund_amount_correct=0.9857`, `pass_rate=0.9857`, `reply_matches_ledger=1.0`, `host_denial_audited=1.0`, `pass_5=0.9286`, `cost_per_success=49.567`.
+Baseline `swarm` (`E-swarm-20261118-6390`): `approval_bypass=0`, `secret_leak=0`, `db_fact_kept=0.9857`, `refund_amount_correct=0.9857`, `pass_rate=0.9857`, `reply_matches_ledger=1.0`, `host_denial_audited=1.0`, `pass_5=0.9286`, `cost_per_success=49.567`.
 
 | PR shape (v1) | `pass_rate` | Δ `pass_rate` (95% paired CI) | `refund_amount_correct` | `reply_matches_ledger` | Kết quả Gate |
 |---|---|---|---|---|---|
-| `swarm` (`E-swarm-20261118-2727`) | `0.9857` | `+0.000` `[+0.000, +0.000]` | `0.9857` | `1.0` | `exit 0 — merge` |
-| `fixed` (`E-fixed-20261118-2727`) | `1.0` | `+0.014` `[+0.000, +0.043]` | `1.0` | `1.0` | `exit 0 — merge` |
-| `seeded_regression` (`E-seeded_regression-20261118-2727`) | `0.7143` | `-0.271` `[-0.500, -0.057]` | `0.8571` (`CI [-0.315, +0.000]`) | `0.7857` (`CI [-0.429, +0.000]`) | **`exit 1 — blocked: refund_amount_correct, pass_rate, reply_matches_ledger`** |
+| `swarm` (`E-swarm-20261118-6390`) | `0.9857` | `+0.000` `[+0.000, +0.000]` | `0.9857` | `1.0` | `exit 0 — merge` |
+| `fixed` (`E-fixed-20261118-6390`) | `1.0` | `+0.014` `[+0.000, +0.043]` | `1.0` | `1.0` | `exit 0 — merge` |
+| `seeded_regression` (`E-seeded_regression-20261118-6390`) | `0.7143` | `-0.271` `[-0.500, -0.057]` | `0.8571` (`CI [-0.315, +0.000]`) | `0.7857` (`CI [-0.429, +0.000]`) | **`exit 1 — blocked: refund_amount_correct, pass_rate, reply_matches_ledger`** |
 
 Độ phủ phát hiện lỗi ở M3 (`python -m lab9.mutation --detect --spec config/metric_spec.yaml`): **`detection 100.00%`** (`>= 80%`) và **`false alarms 0.00%`** (`<= 10%`).
 
@@ -72,7 +72,7 @@ Baseline `swarm` (`E-swarm-20261118-2727`): `approval_bypass=0`, `secret_leak=0`
 
 ## Kết quả & Phân tích v2 (M5–M7: Advanced & Expert)
 
-### 1. Baseline v2 vs `slice_regression` (`E-swarm-20261118-99fe` vs `E-slice_regression-20261118-99fe`)
+### 1. Baseline v2 vs `slice_regression` (`E-swarm-20261118-2b0c` vs `E-slice_regression-20261118-2b0c`)
 
 - `baseline_v2.json`: `pass_rate = 0.9786`, `refund_amount_correct = 0.9786`, `reply_matches_ledger = 1.0`, `pass_at_1 = 0.9786`, `pass_at_3 = 1.0`, `pass_at_5 = 1.0`, `pass_hat_1 = 0.9786`, `pass_hat_3 = 0.9357`, `pass_hat_5 = 0.8929`, `slice:denial = 0.9455`, `slice:money_movement = 1.0`, `slice:adversarial = 0.9714`, `slice:escalation = 1.0`.
 - `slice_regression`: `pass_rate = 0.9357` (`min: 0.85` → `ok`, `Δ -0.043 CI [-0.121, +0.029]` cắt qua `0` → không chặn ở mức trung bình toàn cục!), `pass_hat_5 = 0.8929` (`ok`), nhưng bị chặn bởi **`slice:money_movement/pass_rate = 0.85`** (`min: 0.95`, `Δ -0.150 CI [-0.300, +0.000]`) và **`slice:adversarial/pass_rate = 0.9143`** (`min: 0.93`, `Δ -0.057 CI [-0.186, +0.057]`) → `exit 1`.
